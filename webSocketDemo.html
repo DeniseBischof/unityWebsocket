@@ -1,0 +1,49 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+    
+    <title>Websocket Client</title>
+    <script type="text/javascript">
+        
+        var start = function () {
+            
+            var inc = document.getElementById('incoming');
+            var wsImpl = window.WebSocket || window.MozWebSocket;
+            var form = document.getElementById('sendForm');
+            var input = document.getElementById('sendText');
+            
+            inc.innerHTML += "Starte Verbindung...<br/>";
+
+            window.ws = new wsImpl('ws://localhost:4649/GetColor', 'my-protocol');
+
+            ws.onmessage = function (evt) {
+                inc.innerHTML += evt.data + '<br/>';
+            };
+
+            ws.onopen = function () {
+                inc.innerHTML += '... verbunden. Bitte wähle eine Farbe.<br/>';
+            };
+
+            ws.onclose = function () {
+                inc.innerHTML += '... nicht verbunden<br/>';
+            }
+            
+			form.addEventListener('submit', function(e){
+				e.preventDefault();
+				var val = input.value;
+				ws.send(val);
+				input.value = "";
+			});
+            
+        }
+        window.onload = start;
+    </script>
+    
+</head>
+<body>
+	<form id="sendForm">
+		<input id="sendText" placeholder="Text to send" />
+	</form>
+    <pre id="incoming"></pre>
+</body>
+</html>
